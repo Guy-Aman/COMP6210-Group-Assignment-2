@@ -15,5 +15,6 @@ def mbr_of_nodes(nodes):
             max(n.mbr[3] for n in nodes))
 
 def perimeter(box):
-    return 2 * ((box[2] - box[0]) + (box[3] - box[1]))
-
+    width = box[2] - box[0] 
+    height = box[3] - box[1]
+    return 2 * (width + height)

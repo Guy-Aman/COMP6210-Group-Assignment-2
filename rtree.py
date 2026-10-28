@@ -18,3 +18,14 @@ def perimeter(box):
     width = box[2] - box[0] 
     height = box[3] - box[1]
     return 2 * (width + height)
+
+class Node:
+    __slots__ = ("leaf", "entries", "mbr", "parent")
+    
+    def __init__(self, leaf):
+        self.leaf = leaf
+        self.entries = []
+        self.mbr = None
+        self.parent = None
+
+# node = Node(True)

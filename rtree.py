@@ -19,7 +19,7 @@ import math
 
 
 class Node(object):
-    def __init__(self, B=4):              # EDIT: B passed in (no global B)
+    def __init__(self, B=4):                      # EDIT: B passed in (no global B)
         self.B = B
         self.id = 0
         self.child_nodes = []
@@ -142,11 +142,14 @@ class RTree(object):
         if node.is_leaf():
             return node
         else:
-            min_increase = sys.maxsize
+            min_increase = math.inf                   # EDIT: inf, not sys.maxsize
             best_child = None
             for child in node.child_nodes:
                 inc = self.peri_increase(child, point)
-                if min_increase > inc:
+                # EDIT (D4): tie on increase -> smaller existing MBR perimeter,
+                # then lowest child position (strict < keeps the earlier child)
+                if (best_child is None or inc < min_increase or
+                        (inc == min_increase and child.perimeter() < best_child.perimeter())):
                     min_increase = inc
                     best_child = child
             return best_child
@@ -161,12 +164,13 @@ class RTree(object):
     def split(self, node):
         best_s1 = self._new_node()     # EDIT: nodes created with B and an id
         best_s2 = self._new_node()
-        best_perimeter = sys.maxsize
-        lo = max(1, math.ceil(0.4 * self.B))          # EDIT: uses self.B
+        best_perimeter = math.inf                     # EDIT: inf, not sys.maxsize (huge coordinates)
+        lo = max(1, (2 * self.B + 4) // 5)            # EDIT: integer ceil(0.4*B) (D4), uses self.B
         if node.is_leaf():
             m = len(node.data_points)
-            divides = [sorted(node.data_points, key=lambda d: d['x']),
-                       sorted(node.data_points, key=lambda d: d['y'])]
+            # EDIT (D4): sort keys end in the unique id
+            divides = [sorted(node.data_points, key=lambda d: (d['x'], d['y'], d['id'])),
+                       sorted(node.data_points, key=lambda d: (d['y'], d['x'], d['id']))]
             for divide in divides:
                 for i in range(lo, m - lo + 1):
                     s1 = Node(self.B)
@@ -181,10 +185,11 @@ class RTree(object):
                         best_s2.data_points, best_s2.MBR = s2.data_points, s2.MBR
         else:
             m = len(node.child_nodes)
-            divides = [sorted(node.child_nodes, key=lambda c: c.MBR['x1']),
-                       sorted(node.child_nodes, key=lambda c: c.MBR['x2']),
-                       sorted(node.child_nodes, key=lambda c: c.MBR['y1']),
-                       sorted(node.child_nodes, key=lambda c: c.MBR['y2'])]
+            # EDIT (D4): sort keys end in the unique node id
+            divides = [sorted(node.child_nodes, key=lambda c: (c.MBR['x1'], c.id)),
+                       sorted(node.child_nodes, key=lambda c: (c.MBR['x2'], c.id)),
+                       sorted(node.child_nodes, key=lambda c: (c.MBR['y1'], c.id)),
+                       sorted(node.child_nodes, key=lambda c: (c.MBR['y2'], c.id))]
             for divide in divides:
                 for i in range(lo, m - lo + 1):
                     s1 = Node(self.B)
@@ -236,17 +241,30 @@ class RTree(object):
 
 # ---------- EDIT: shared data loader (floats, optional id, commas) ----------
 def load_points(path):
-    """Accepts lines 'id x y' or 'x y' (spaces or commas). Returns list of dicts."""
+    """Accepts lines 'id x y' or 'x y' (spaces or commas). Returns list of dicts.
+    EDIT: sample files start with header lines ('Facility Location:', 'ID X Y') and may
+    end with a 'Query Point:' section. Non-numeric lines are skipped only BEFORE the first
+    data row; reading stops at a line starting with 'Query'. A bad line after data starts
+    raises ValueError instead of being skipped silently."""
     pts = []
     with open(path) as f:
         for line in f:
+            if line.strip().lower().startswith("query"):
+                break
             parts = line.replace(",", " ").split()
-            if len(parts) == 3:
-                pid, x, y = int(float(parts[0])), float(parts[1]), float(parts[2])
-            elif len(parts) == 2:
-                pid, x, y = len(pts) + 1, float(parts[0]), float(parts[1])
-            else:
+            if not parts:
                 continue
+            try:
+                if len(parts) == 3:
+                    pid, x, y = int(float(parts[0])), float(parts[1]), float(parts[2])
+                elif len(parts) == 2:
+                    pid, x, y = len(pts) + 1, float(parts[0]), float(parts[1])
+                else:
+                    raise ValueError("expected 'id x y' or 'x y'")
+            except ValueError:
+                if pts:
+                    raise ValueError(f"bad data line after row {len(pts)}: {line.strip()!r}")
+                continue                       # header line before the data
             pts.append({'id': pid, 'x': x, 'y': y})
     return pts
 

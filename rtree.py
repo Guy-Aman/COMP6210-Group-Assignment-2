@@ -35,3 +35,11 @@ class RTree:
         self.min_fill = -(-2 * B // 5)
         self.root = Node(leaf = True)
         
+    def _update_mbr(self, node):
+        node.mbr = (mbr_of_points(node.entries) if node.leaf
+                    else mbr_of_nodes(node.entries))
+
+    def _refresh_upward(self, node):
+        while node is not None:          # leaf -> root via parent pointers
+            self._update_mbr(node)
+            node = node.parent

@@ -1,7 +1,7 @@
 import math
 
 def mbr_of_points(points):
-    """points: list of (id, x, y). Returns (smin, ymin, xmax, ymax)"""
+    """points: list of (id, x, y). Returns (xmin, ymin, xmax, ymax)"""
     x_points = [point[1] for point in points]
     y_points = [point[2] for point in points]
     
@@ -28,4 +28,10 @@ class Node:
         self.mbr = None
         self.parent = None
 
-# node = Node(True)
+class RTree:
+   
+    def __init__(self, B):
+        self.B = B
+        self.min_fill = -(-2 * B // 5)
+        self.root = Node(leaf = True)
+        

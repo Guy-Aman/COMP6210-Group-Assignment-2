@@ -1,0 +1,29 @@
+===== Sequential Scan =====
+Skyline size: 5
+id=6, x=1.0, y=12.0
+id=2, x=2.0, y=9.0
+id=8, x=4.0, y=6.0
+id=12, x=7.0, y=3.0
+id=5, x=11.0, y=1.0
+Total running time: 0.000022 seconds
+
+===== BBS =====
+Skyline size: 5
+id=6, x=1.0, y=12.0
+id=2, x=2.0, y=9.0
+id=8, x=4.0, y=6.0
+id=12, x=7.0, y=3.0
+id=5, x=11.0, y=1.0
+Total running time: 0.000033 seconds
+
+===== BBS with Divide-and-Conquer =====
+Skyline size: 5
+id=6, x=1.0, y=12.0
+id=2, x=2.0, y=9.0
+id=8, x=4.0, y=6.0
+id=12, x=7.0, y=3.0
+id=5, x=11.0, y=1.0
+Total running time: 0.000026 seconds
+
+Dataset: Sample_Data/skyline_search.txt (15 points), node capacity B=5
+All three methods return the same skyline: True

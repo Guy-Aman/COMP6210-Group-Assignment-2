@@ -1,0 +1,38 @@
+===== Sequential Scan =====
+Skyline size: 8
+id=227213, x=100.0, y=262.9
+id=233029, x=100.02, y=252.4
+id=257754, x=100.36, y=251.02
+id=192810, x=100.56, y=250.97
+id=207170, x=102.19, y=250.04
+id=211948, x=113.79, y=250.03
+id=298743, x=338.27, y=250.02
+id=267952, x=488.53, y=250.01
+Total running time: 0.068114 seconds
+
+===== BBS =====
+Skyline size: 8
+id=227213, x=100.0, y=262.9
+id=233029, x=100.02, y=252.4
+id=257754, x=100.36, y=251.02
+id=192810, x=100.56, y=250.97
+id=207170, x=102.19, y=250.04
+id=211948, x=113.79, y=250.03
+id=298743, x=338.27, y=250.02
+id=267952, x=488.53, y=250.01
+Total running time: 0.000642 seconds
+
+===== BBS with Divide-and-Conquer =====
+Skyline size: 8
+id=227213, x=100.0, y=262.9
+id=233029, x=100.02, y=252.4
+id=257754, x=100.36, y=251.02
+id=192810, x=100.56, y=250.97
+id=207170, x=102.19, y=250.04
+id=211948, x=113.79, y=250.03
+id=298743, x=338.27, y=250.02
+id=267952, x=488.53, y=250.01
+Total running time: 0.001248 seconds
+
+Dataset: Task3_Datasets/city3.txt (300000 points), node capacity B=50
+All three methods return the same skyline: True
